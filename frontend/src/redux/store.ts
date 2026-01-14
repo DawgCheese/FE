@@ -3,12 +3,14 @@ import chatSlice from "../features/chat/chatSlice.ts";
 import {TypeDivider} from "@mui/material/styles/createPalette";
 import { configureStore } from '@reduxjs/toolkit'
 import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
+import roomSlice from "../features/chat/roomSlice.ts";
 // ...
 
 export const store = configureStore({
     reducer: {
         auth: authSlice.reducer,
-        chat: chatSlice.reducer
+        chat: chatSlice.reducer,
+        room: roomSlice.reducer
     },
 })
 

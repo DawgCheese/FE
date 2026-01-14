@@ -1,7 +1,9 @@
 import {SocketAction} from "../constants/SocketAction.ts";
 import {SocketEvent} from "../constants/SocketEvent.ts";
+import Message from "../models/Message.ts";
 import SocketError from "../models/SocketError.ts";
 import {SocketResponse} from "../models/SocketResponse.ts";
+
 
 const SOCKET_URL = "wss://chat.longapp.site/chat/chat"
 type SuccessHandler<T> = (data: SocketResponse<T>) => void
@@ -15,6 +17,7 @@ class SocketService {
     socket: WebSocket
     successHandlers: Map<SocketEvent, SuccessHandler<never>>
     errorHandlers: Map<SocketEvent, ErrorHandler>
+    receiveMessageHandler?: (message: Message) => void
     onOpen?: () => void;
 
     constructor() {
@@ -25,6 +28,7 @@ class SocketService {
         this.socket.onopen = () => {
             this.onOpen && this.onOpen()
         }
+
 
         this.successHandlers = new Map<SocketEvent, SuccessHandler<never>>()
         this.errorHandlers = new Map<SocketEvent, ErrorHandler>()

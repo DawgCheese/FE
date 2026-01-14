@@ -1,7 +1,7 @@
-import {Key} from "@constants/Key.ts";
-import {useAuthAction, useAuthSelector} from "@features/auth/authSlice.ts";
-import {useAppDispatch} from "@redux/store.ts";
-import authService from "@services/AuthService.ts";
+import {Key} from "../../constants/Key.ts";
+import {useAuthAction, useAuthSelector} from "../../features/auth/authSlice.ts";
+import {useAppDispatch} from "../../redux/store.ts";
+import authService from "../../services/AuthService.ts";
 import React, {JSX, useEffect, useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import Loader from "../../components/Loader";
