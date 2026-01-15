@@ -1,4 +1,5 @@
 import {ChatType} from "../../constants/ChatType.ts";
+import {useChatSelector} from "../../features/chat/chatSlice.ts";
 import RoomChat from "../../models/RoomChat.ts";
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
@@ -6,7 +7,6 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import {TabContext, TabPanel} from "@mui/lab";
 import {
-    Avatar,
     Box,
     Button,
     Dialog,
@@ -14,14 +14,8 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    FormControl,
     IconButton,
-    InputLabel,
     List,
-    ListItem,
-    ListItemAvatar,
-    ListItemButton,
-    ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent,
     TextField,
     Typography
 } from "@mui/material";
@@ -31,30 +25,77 @@ import chatService from "../../services/ChatService.ts";
 import React, {useEffect, useState} from 'react';
 import RoomItem from "../../components/RoomItem";
 
+interface NewRoom {
+    name: string
+    type: ChatType
+}
+
+const initialNewRoom: NewRoom = {
+    name: '',
+    type: ChatType.People
+};
+
 const RoomList = () => {
 
     const [value, setValue] = React.useState(ChatType.People);
     const [rooms, setRooms] = useState<RoomChat[]>([])
-    const [openPeople, setOpenPeople] = React.useState(false);
-    const [type, setType] = useState<string>('people');
+    const {newMessages} = useChatSelector();
+    const [openModal, setOpenModal] = React.useState(false);
+    const [type, setType] = useState<ChatType>(ChatType.People);
+    const [newRoom, setNewRoom] = useState<NewRoom>(initialNewRoom);
 
     const handleChange = (event: React.SyntheticEvent, newValue: ChatType) => {
         setValue(newValue);
     };
 
+    const handleButtonClick = (type: ChatType) => {
+        setType(type);
+        setNewRoom(prevState => ({
+            ...prevState,
+            [type]: type
+        }));
+        console.log(newRoom.type);
+        handleClickOpen();
+    }
+
     const handleClickOpen = () => {
-        setOpenPeople(true);
+        setOpenModal(true);
     };
 
-    const handleClose = (event: React.SyntheticEvent<unknown>, reason?: string) => {
-        if (reason !== 'backdropClick') {
-            setOpenPeople(false);
-        }
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const name = e.target.value;
+        console.log(name)
+        setNewRoom(prevState => ({...prevState, name}));
+    }
+
+    const handleSubmit = () => {
+        // Thêm vào RoomChat
+        const room: RoomChat = {
+            name: newRoom.name,
+            type: (newRoom.type === ChatType.People) ? 0 : 1,
+            actionTime: new Date()
+        };
+        console.log(room);
+        // Set room mới lên đầu danh sách
+        setRooms(prevRooms => [room, ...prevRooms]);
+        console.log(rooms);
+        handleClose();
+    }
+
+    const handleClose = () => {
+        setOpenModal(false);
     };
+
+    const handleRooms = (rooms: RoomChat[]) => {
+        const peopleRooms: RoomChat[] = rooms.filter(room => room.type === 0);
+        setRooms(peopleRooms);
+    }
 
     useEffect(() => {
-        chatService.findRoomChat().then((rooms) => setRooms(rooms))
+        chatService.findRoomChat().then((rooms) => handleRooms(rooms))
     }, []);
+
+    console.log(rooms)
 
     return (
         <Box sx={{
@@ -72,7 +113,8 @@ const RoomList = () => {
             </Box>
 
             <Box sx={{
-                display: "flex"
+                display: "flex",
+                justifyContent: "space-between"
             }}>
                 <Box sx={{paddingY: 2}}>
                     <TextField size="medium"/>
@@ -80,14 +122,18 @@ const RoomList = () => {
 
                 <Box sx={{
                     paddingY: 2,
-                    marginLeft: "8px"
                 }}>
                     <Box>
-                        <IconButton color="primary" onClick={handleClickOpen} sx={{padding: "14px"}}>
+                        <IconButton color="primary" onClick={() => handleButtonClick(ChatType.People)}
+                                    sx={{padding: "14px"}}>
                             <PersonAddIcon color="primary"/>
                         </IconButton>
+                        <IconButton color="primary" onClick={() => handleButtonClick(ChatType.Group)}
+                                    sx={{padding: "14px"}}>
+                            <GroupAddIcon color="primary"/>
+                        </IconButton>
                         <Dialog
-                            open={openPeople}
+                            open={openModal}
                             onClose={handleClose}
                             aria-labelledby="alert-dialog-title"
                             aria-describedby="alert-dialog-description"
@@ -96,17 +142,24 @@ const RoomList = () => {
                                 fontWeight: "bold",
                                 fontSize: "20px"
                             }}>
-                                {"Thêm người dùng mới"}
+                                {type === ChatType.People ? "Add new people" : "Add new group"}
                             </DialogTitle>
                             <DialogContent>
                                 <DialogContentText id="alert-dialog-description" sx={{paddingTop: "10px"}}>
-                                    <TextField id="outlined-basic" label="Thêm người dùng" variant="outlined" sx={{width: 300}}/>
+                                    <TextField
+                                        id="outlined-basic"
+                                        label={type === ChatType.People ? "Add new people" : "Add new group"}
+                                        variant="outlined"
+                                        sx={{width: 300}}
+                                        name={"name"}
+                                        onChange={handleInputChange}
+                                    />
                                 </DialogContentText>
                             </DialogContent>
-                            <DialogActions>
-                                <Button onClick={handleClose}>Disagree</Button>
-                                <Button onClick={handleClose} autoFocus>
-                                    Agree
+                            <DialogActions sx={{paddingRight: "24px"}}>
+                                <Button onClick={handleClose} color="error" variant="contained">Cancel</Button>
+                                <Button onClick={handleSubmit} autoFocus color="success" variant="contained">
+                                    Confirm
                                 </Button>
                             </DialogActions>
                         </Dialog>
