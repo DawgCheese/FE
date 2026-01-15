@@ -1,6 +1,6 @@
-import {ChatType} from "../../constants/ChatType.ts";
-import Message from "../../models/Message.ts";
-import {useAppSelector} from "../../redux/store.ts";
+import {ChatType} from "@constants/ChatType.ts";
+import Message from "@models/Message.ts";
+import {useAppSelector} from "@redux/store.ts";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 interface ChatState {
@@ -27,8 +27,9 @@ const chatSlice = createSlice({
             state.target = action.payload.target
             state.type = action.payload.type
         },
-        removeNewMessage(state, action: PayloadAction<Message>){
-            
+        removeNewMessage(state, action: PayloadAction<{target: string, type: ChatType}>){
+            state.newMessages = state.newMessages.filter(m => m.name !== action.payload.target && m.type !== action.type);
+            console.log(state.newMessages)
         }
     }
 })

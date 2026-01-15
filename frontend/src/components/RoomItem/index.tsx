@@ -1,18 +1,26 @@
-import {ChatType} from "../../constants/ChatType.ts";
-import {useChatAction} from "../../features/chat/chatSlice.ts";
-import RoomChat from "../../models/RoomChat.ts";
-import {Avatar, ListItem, ListItemAvatar, ListItemButton, ListItemText, Typography} from "@mui/material";
-import {useAppDispatch} from "../../redux/store.ts";
+import {ChatType} from "@constants/ChatType.ts";
+import {useChatAction} from "@features/chat/chatSlice.ts";
+import {Avatar, Chip, ListItem, ListItemAvatar, ListItemButton, ListItemText, Typography} from "@mui/material";
+import {useAppDispatch} from "@redux/store.ts";
 import React, {useCallback} from 'react';
+import {useRoomAction, useRoomSelector} from "@features/chat/roomSlice.ts";
+import {RoomDisplay} from "../../layouts/RoomList/Index.tsx";
+
 
 interface RoomItemProps {
     chatType: ChatType
-    data: RoomChat
+    data: RoomDisplay
+    active: boolean
 }
 
-const RoomItem = ({data, chatType}: RoomItemProps) => {
+const RoomItem = ({data, chatType, active}: RoomItemProps) => {
+    // useState cho set trạng thái của highlight
     const {setTarget} = useChatAction();
+    const {setHighlight} = useRoomAction();
     const dispatch = useAppDispatch();
+
+
+
 
     const stringToColor = useCallback((string: string) => {
 
@@ -40,33 +48,36 @@ const RoomItem = ({data, chatType}: RoomItemProps) => {
         return {
             sx: {
                 bgcolor: stringToColor(name),
+                width: "38px",
+                height: "38px",
             },
-            children: `${name[0]}${name[1] }`.toUpperCase(),
+            children: `${name[0]}${name[1]}`.toUpperCase(),
         };
     }, [stringToColor])
 
-
-
     function handleClick() {
-        dispatch(setTarget({target: data.name, type: chatType}))
+        dispatch(setHighlight({highlight: false, name: data.chat.name}))
+        dispatch(setTarget({target: data.chat.name, type: chatType}))
+        dispatch(setHighlight({ name: data.chat.name, highlight: false }));
     }
 
     return (
         <ListItem alignItems="flex-start" disablePadding
+                  secondaryAction={data.highlight ? <Chip color="primary" size="small" label={data.message}/> : ""}
         >
-            <ListItemButton onClick={() => handleClick()}>
+            <ListItemButton onClick={() => handleClick()} selected={active} sx={{borderRadius: 2}}>
                 <ListItemAvatar>
-                    <Avatar {...stringAvatar(data.name)}/>
+                    <Avatar {...stringAvatar(data.chat.name)}/>
 
                 </ListItemAvatar>
 
-                    <div>
-                        <p>
+                <div>
+                    <p>
 
-                        </p>
-                    </div>
+                    </p>
+                </div>
                 <ListItemText
-                    primary={data.name}
+                    primary={data.chat.name}
                     secondary={
                         <React.Fragment>
                             <Typography
@@ -75,10 +86,15 @@ const RoomItem = ({data, chatType}: RoomItemProps) => {
                                 variant="body2"
                                 color="text.primary"
                             >
-                                {data.actionTime.toDateString()}
+                                {data.chat.actionTime.toDateString()}
                             </Typography>
                         </React.Fragment>
                     }
+                    primaryTypographyProps={{
+                        sx: {
+                            fontWeight: data.highlight ? 'bold' : 'normal',
+                        }
+                    }}
                 />
             </ListItemButton>
         </ListItem>

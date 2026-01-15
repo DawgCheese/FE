@@ -3,8 +3,12 @@ import LoginRequest from "../models/LoginRequest.ts";
 import RegisterRequest from "../models/RegisterRequest.ts";
 import {SocketResponse} from "../models/SocketResponse.ts";
 import User from "../models/User.ts";
-import socketService from "./SocketService.ts";
+import socketService from "../services/SocketService.ts";
 
+
+type CheckResponse = {
+    status: boolean
+}
 class AuthService {
     async login(loginRequest: LoginRequest) {
         return new Promise<User>((resolve, reject) => {
@@ -48,6 +52,18 @@ class AuthService {
     async logout() {
         return new Promise<string>((resolve, reject) => {
             socketService.send(SocketEvent.Logout,undefined,{
+                onSuccess: (data) => {
+                    resolve(data.data)
+                },
+                onError: data => reject(data)
+            })
+        })
+    }
+
+
+    async checkActivity(target: string) {
+        return new Promise<CheckResponse>((resolve, reject) => {
+            socketService.send(SocketEvent.CheckUser,{user: target},{
                 onSuccess: (data) => {
                     resolve(data.data)
                 },

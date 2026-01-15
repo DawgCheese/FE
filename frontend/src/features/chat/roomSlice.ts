@@ -15,10 +15,11 @@ const roomSlice = createSlice({
     initialState,
     reducers: {
         addNewRoom(state, action: PayloadAction<RoomDisplay>) {
-            state.roomList = [ action.payload, ...state.roomList,];
+            state.roomList = [...state.roomList, action.payload];
         },
         addRooms(state, action: PayloadAction<RoomDisplay[]>) {
             state.roomList = action.payload;
+            console.log(state.roomList);
         },
         setHighlight(state, action: PayloadAction<{ name: string; highlight: boolean }>) {
             const index = state.roomList.findIndex(room => room.chat.name === action.payload.name);
