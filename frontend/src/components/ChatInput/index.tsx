@@ -1,5 +1,5 @@
 import {useAuthSelector} from "@features/auth/authSlice.ts";
-import {useChatAction, useChatSelector} from "@features/chat/chatSlice.ts";
+import {useChatSelector} from "@features/chat/chatSlice.ts";
 import Message from "@models/Message.ts";
 import {SendOutlined} from "@mui/icons-material";
 import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
@@ -11,10 +11,12 @@ import Picker from "emoji-picker-react"
 import {EmojiClickData} from "emoji-picker-react/src/types/exposedTypes.ts";
 import {FormEvent, useEffect, useState} from 'react';
 import style from "./style.ts";
+import {ChatType} from "@constants/ChatType.ts";
 
 interface ChatInputProps {
     onSubmit: (message: Message) => void
 }
+const chatType = [ChatType.People, ChatType.Group]
 
 const ChatInput = ({onSubmit}: ChatInputProps) => {
     const [message, setMessage] = useState("");
@@ -30,7 +32,7 @@ const ChatInput = ({onSubmit}: ChatInputProps) => {
         e.preventDefault();
         if (!message)
             return;
-        chatService.sendMessage(message, target);
+        chatService.sendMessage(message, target, type);
         setMessage("")
         const messageObject: Message = {
             createAt: new Date().toDateString(),
@@ -38,7 +40,7 @@ const ChatInput = ({onSubmit}: ChatInputProps) => {
             mes: message,
             name: user.name,
             to: target,
-            type: type
+            type: chatType.indexOf(type)
         }
         onSubmit(messageObject)
 

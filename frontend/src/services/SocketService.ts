@@ -4,7 +4,7 @@ import Message from "@models/Message.ts";
 import SocketError from "@models/SocketError.ts";
 import {SocketResponse} from "@models/SocketResponse.ts";
 
-const SOCKET_URL = "wss://chat.longapp.site/chat/chat";
+const SOCKET_URL = "wss://chat.longapp.site/chat/chat"
 type SuccessHandler<T> = (data: SocketResponse<T>) => void
 type ErrorHandler =(error : SocketError) => void
 type SocketSendingOption = {
@@ -28,6 +28,7 @@ class SocketService {
             this.onOpen && this.onOpen()
         }
 
+
         this.successHandlers = new Map<SocketEvent, SuccessHandler<never>>()
         this.errorHandlers = new Map<SocketEvent, ErrorHandler>()
     }
@@ -37,12 +38,19 @@ class SocketService {
         const handler = this.errorHandlers.get(error.event)
         this.successHandlers.set(error.event, undefined)
         handler && handler(error);
+        this.removeHandler(error.event);
     }
 
     handleSuccess(data: SocketResponse<never>) {
-        console.log(data)
         const handler = this.successHandlers.get(data.event)
         handler && handler(data);
+        this.removeHandler(data.event)
+    }
+
+    removeHandler(event: SocketEvent){
+        this.successHandlers.set(event, null)
+        this.errorHandlers.set(event, null)
+
     }
 
     handleReceive(ev: MessageEvent) {
@@ -51,12 +59,14 @@ class SocketService {
             this.handleError(data as SocketError)
         } else {
             if(data.event == SocketEvent.SendChat){
+                console.log(data)
                 this.receiveMessageHandler && this.receiveMessageHandler(data.data)
             } else {
                 this.handleSuccess(data as SocketResponse<never>);
 
             }
         }
+
 
     }
 
@@ -66,6 +76,13 @@ class SocketService {
         const {onError, onSuccess} = option
         onSuccess && this.successHandlers.set(event, onSuccess)
         onError && this.errorHandlers.set(event, onError)
+        console.log(JSON.stringify({
+            action,
+            data: {
+                event,
+                data
+            }
+        }))
         this.socket.send(JSON.stringify({
             action,
             data: {

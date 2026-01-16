@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {useAppSelector} from "../../redux/store.ts";
+import {useAppSelector} from "@redux/store.ts";
 import {RoomDisplay} from "../../layouts/RoomList/Index.tsx";
 
 export interface RoomList {
@@ -15,11 +15,10 @@ const roomSlice = createSlice({
     initialState,
     reducers: {
         addNewRoom(state, action: PayloadAction<RoomDisplay>) {
-            state.roomList = [...state.roomList, action.payload];
+            state.roomList = [ action.payload, ...state.roomList,];
         },
         addRooms(state, action: PayloadAction<RoomDisplay[]>) {
             state.roomList = action.payload;
-            console.log(state.roomList);
         },
         setHighlight(state, action: PayloadAction<{ name: string; highlight: boolean }>) {
             const index = state.roomList.findIndex(room => room.chat.name === action.payload.name);

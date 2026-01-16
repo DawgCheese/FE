@@ -3,6 +3,7 @@ import {Avatar, Badge, Box, IconButton, Theme, Typography} from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import React, {useEffect, useState} from 'react';
 import authService from "@services/AuthService.ts";
+import avatarUtils from "../../utils/AvatarUtils.ts";
 
 const ChatHeader = () => {
     const {target,} = useChatSelector();
@@ -15,6 +16,8 @@ const ChatHeader = () => {
             })
             .catch(reason => console.log(reason))
     }, [target]);
+
+
 
     return (
         <Box boxShadow={"rgba(17, 17, 26, 0.1) 0px 0px 16px;"}
@@ -58,7 +61,7 @@ const ChatHeader = () => {
                         },
                     }}
                 >
-                    <Avatar sx={{width: 40, height: 40}}></Avatar>
+                    <Avatar {...avatarUtils.avatar(target, "44px", "16px")}/>
                 </Badge>
                 <Box display="flex" flexDirection="column" marginLeft={1}>
                     <Typography variant="subtitle1">

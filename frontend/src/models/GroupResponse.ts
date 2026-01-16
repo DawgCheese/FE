@@ -1,4 +1,4 @@
-import Message from "../models/Message.ts";
+import Message from "@models/Message.ts";
 
 export default interface GroupResponse {
     "id": 1514,

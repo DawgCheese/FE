@@ -15,6 +15,9 @@ const initialState: ChatState = {
     type: ChatType.People
 }
 
+const chatType = [ChatType.People, ChatType.Group]
+
+
 
 const chatSlice = createSlice({
     name: "chat",
@@ -28,7 +31,7 @@ const chatSlice = createSlice({
             state.type = action.payload.type
         },
         removeNewMessage(state, action: PayloadAction<{target: string, type: ChatType}>){
-            state.newMessages = state.newMessages.filter(m => m.name !== action.payload.target && m.type !== action.type);
+            state.newMessages = state.newMessages.filter(m => m.name !== action.payload.target && action.payload.type !== chatType[m.type]);
             console.log(state.newMessages)
         }
     }

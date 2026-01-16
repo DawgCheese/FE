@@ -16,8 +16,7 @@ class AvatarUtils {
         return color;
     }
 
-  avatar(name: string, size: number | string, fontSize: number | string) {
-
+    avatar(name: string, size: string , fontSize) {
         const color = this.stringToColor(name);
         return {
             sx: {
