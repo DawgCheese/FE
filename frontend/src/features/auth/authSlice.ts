@@ -1,7 +1,6 @@
-import {Key} from "../../constants/Key.ts";
-import chatSlice from "../../features/chat/chatSlice.ts";
-import User from "../../models/User.ts";
-import {useAppSelector} from "../../redux/store.ts";
+import {Key} from "@constants/Key.ts";
+import User from "@models/User.ts";
+import {useAppSelector} from "@redux/store.ts";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 interface AuthState{
@@ -22,6 +21,11 @@ const authSlice = createSlice({
         setUser(state, action: PayloadAction<User>){
             state.user = action.payload
             localStorage.setItem(Key.USER, JSON.stringify(action.payload))
+        },
+        logout(state){
+            state.user = null
+            localStorage.removeItem(Key.USER)
+
         }
     }
 })

@@ -1,11 +1,9 @@
 import './App.css'
-import AuthorizationFilter from "./features/auth/AuthoriztionFilter.tsx";
-import {useAuthAction} from "./features/auth/authSlice.ts";
-import {useChatAction} from "./features/chat/chatSlice.ts";
-import {useAppDispatch} from "./redux/store.ts";
-import authService from "./services/AuthService.ts";
-import socketService from "./services/SocketService.ts";
-import {add} from "lodash";
+import AuthorizationFilter from "@features/auth/AuthoriztionFilter.tsx";
+import {useAuthAction} from "@features/auth/authSlice.ts";
+import {useChatAction} from "@features/chat/chatSlice.ts";
+import {useAppDispatch} from "@redux/store.ts";
+import socketService from "@services/SocketService.ts";
 
 import {useEffect, useState} from "react";
 import {Route, Routes} from "react-router-dom";
@@ -16,14 +14,10 @@ import RegisterPage from "./pages/RegisterPage";
 
 function App() {
     const [loading, setLoading] = useState(true)
-    const dispatch = useAppDispatch();
-    const {setUser} = useAuthAction()
-    const {addNewMessage} = useChatAction()
+
     useEffect(() => {
 
-        socketService.receiveMessageHandler = (message) => {
-            dispatch(addNewMessage(message))
-        }
+
         if (socketService.isOpen()) {
             setLoading(false)
 
