@@ -3,6 +3,7 @@ import Message from "@models/Message.ts";
 import {useAppSelector} from "@redux/store.ts";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
+// Quản lý chat
 interface ChatState {
     target: string
     newMessages: Message[]

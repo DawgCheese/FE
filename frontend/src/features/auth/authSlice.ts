@@ -3,6 +3,7 @@ import User from "@models/User.ts";
 import {useAppSelector} from "@redux/store.ts";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
+// Quản lý đăng nhập
 interface AuthState{
     user: User | null
     loading: boolean

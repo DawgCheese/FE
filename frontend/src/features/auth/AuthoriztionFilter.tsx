@@ -6,6 +6,7 @@ import React, {JSX, useEffect, useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import Loader from "../../components/Loader";
 
+//Xác Thực người dùng trước khi vào trang
 interface AuthorizationFilter {
     children: JSX.Element
 }

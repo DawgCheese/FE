@@ -2,6 +2,7 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {useAppSelector} from "@redux/store.ts";
 import {RoomDisplay} from "../../layouts/RoomList/Index.tsx";
 
+// Quản lý phòng chat
 export interface RoomList {
     roomList: RoomDisplay[]
 }

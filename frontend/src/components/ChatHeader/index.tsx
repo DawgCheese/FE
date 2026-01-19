@@ -7,7 +7,7 @@ import avatarUtils from "../../utils/AvatarUtils.ts";
 
 const ChatHeader = () => {
     const {target,} = useChatSelector();
-    const [isActivity, setIsActivity] = useState(false)
+    const [isActivity, setIsActivity] = useState(true)
     useEffect(() => {
         authService.checkActivity(target)
             .then(res => {
